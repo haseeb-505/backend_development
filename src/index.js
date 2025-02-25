@@ -6,4 +6,8 @@ dotenv.config({
     path: './env'
 })
 
-connectDB()
+connectDB() // this returns a promise
+    .then( () => {
+        app
+    } )
+    .catch()
