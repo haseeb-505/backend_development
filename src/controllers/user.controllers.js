@@ -196,7 +196,7 @@ const logoutUser = asyncHandler(async (req, res) => {
             }
         },
         {
-            new: true // to get the updated document
+            new: true // to get the updated value of refresh token we updated above
         }
     )
 
