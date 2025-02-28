@@ -24,11 +24,21 @@ app.use(express.urlencoded(
         limit: "16Kb"
     }
 ))
-
 // statis assets management
 app.use(express.static("public"))
-
 // cookie parser middleware
-app.use(cookieParser)
+app.use(cookieParser()) // don't forget to add parenthesis here, otherwise it will throw an error
+// this will parse the cookies from the request headers and make it available in the req.cookies object
+
+// routes import 
+import userRouter from "./routes/user.routes.js"
+
+// routes declaration
+app.use("/api/v1/users", userRouter)
+
+
+
+
+// export app
 
 export { app } 
