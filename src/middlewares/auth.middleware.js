@@ -8,7 +8,12 @@ import {User} from "../models/user.models.js";
 
 export const verifyJWT = asyncHandler(async (req, _, next) => {
     try {
-        const token = req.cookies?.accesToken || req.headers("Authorization")?.replace("Bearer ", "") 
+        // console.log("\n\nreq.cookies:", req.cookies);
+        // console.log("\n\nreq.headers:", req.headers);
+        
+        const token = req.cookies?.accessToken || req.headers["authorization"]?.replace("Bearer ", "")
+        // console.log("\n\ntoken is:", token)
+
         // token is usually in the form autorization: Beareer <token>
         // replace Bearer with empty string to get the token part only
         if (!token) {

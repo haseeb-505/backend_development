@@ -26,7 +26,7 @@ router.route("/register").post(
 router.route("/login").post(loginUser)
 
 // secured routes
-router.route("logout").post(verifyJWT, logoutUser) 
+router.route("/logout").post(verifyJWT, logoutUser) 
 // verfiyJWT will first run the authorization and then pass to the next
 // middleware which is logoutUser
 

@@ -66,7 +66,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
 
 // generate access token
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             // payload data, means the data that we want to send with the token
             _id: this._id,
@@ -79,11 +79,12 @@ userSchema.methods.generateAccessToken = function(){
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
     )
+    
 }
 
 // refresh token
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             // payload data, means the data that we want to send with the token
             _id: this._id
