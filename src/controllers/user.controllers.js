@@ -288,6 +288,21 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
+// password update function
+const updatePassword = asyncHandler(async (req, re) => {
+    // get the user from the db
+    // check if the old password is correct
+    // update the password
+    // save the user without password validation, do not return the password
+    // send the response
+
+    const user = await User.findById(req.user._id)
+}) 
+
+
+
+
+// export the functions
 export {
     registerUser,
     loginUser,
