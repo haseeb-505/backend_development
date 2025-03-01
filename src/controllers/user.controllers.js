@@ -388,7 +388,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         {new: true}
     ).select("-password")
 
-    retrun res
+    return res
         .status(200)
         .json(200, user, "user\'s avatar is updated successfully!")
 
@@ -424,7 +424,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         {new: true}
     ).select("-password")
 
-    retrun res
+    return res
         .status(200)
         .json(200, user, "user\'s coverImage is updated successfully!")
 
