@@ -370,9 +370,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     // upload the local file to cloudinary
     const avatar = await uploadToCloudinary(avatarLocalPath)
-
-    console.log("\nAvatar file has this information: ", avatar)
-    console.log("\n\nAvatar url has this information: ", avatar.url)
+    // TODO
+    // console.log("\nAvatar file has this information: ", avatar)
+    // console.log("\n\nAvatar url has this information: ", avatar.url)
     
     if (!avatar) {
         throw new ApiError(400, "avatar file could not be uploaded to cloudinary")
@@ -383,6 +383,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         {
             $set: {
                 avatar: avatar || avatar.url
+                // ! this avatar itself is a url as we returning only url 
+                // ! not the image in uploadtocloudinary function
             }
         },
         {new: true}
@@ -418,7 +420,9 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         req.user?._id,
         {
             $set: {
-                coverImage: coverImage || coverImage.url
+                coverImage: coverImage || coverImage.url 
+                // ! this coverImage itself is a url as we returning only url 
+                // ! not the image in uploadtocloudinary function
             }
         },
         {new: true}
@@ -429,8 +433,6 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         .json(200, user, "user\'s coverImage is updated successfully!")
 
 })
-
-
 
 // export the functions
 export {
