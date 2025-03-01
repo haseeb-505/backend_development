@@ -1,9 +1,9 @@
 import {Router} from 'express';
 import { registerUser } from '../controllers/user.controllers.js';
 import {upload} from '../middlewares/multer.middleware.js';
-import { loginUser } from '../controllers/user.controllers.js';
+import { loginUser, logoutUser, refreshAccessToken } from '../controllers/user.controllers.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
-import { logoutUser } from '../controllers/user.controllers.js';
+
 
 const router = Router();
 // injecting the upload middleware before implementing the registerUser controller
@@ -29,5 +29,7 @@ router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser) 
 // verfiyJWT will first run the authorization and then pass to the next
 // middleware which is logoutUser
+
+router.route("/refresh-token").post(refreshAccessToken)
 
 export default router;
