@@ -368,9 +368,25 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Avatar file is missing")
     }
 
-    // upload the local file to cloudinary
+        // TODO: delete old mage
+    // * for this we need publict id of the image and we also need to fetch image through user id
+
+    // find user firs
+    const user = await User.findById(req.user?._id);
+    if(!user){
+        throw new ApiError(404, "User not found")
+    }
+
+    // delete the file
+     // **Delete Old Avatar from Cloudinary**
+     if (user.avatar) {
+        const oldPublicId = user.avatar.split('/').pop().split('.')[0]; // Extract public_id
+        await cloudinary.uploader.destroy(oldPublicId); // Delete old image
+    }
+
+    // upload the new avatar local file to cloudinary
     const avatar = await uploadToCloudinary(avatarLocalPath)
-    // TODO
+    
     // console.log("\nAvatar file has this information: ", avatar)
     // console.log("\n\nAvatar url has this information: ", avatar.url)
     
@@ -378,7 +394,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(400, "avatar file could not be uploaded to cloudinary")
     }
 
-    const user = await User.findByIdAndUpdate(
+    // update the user's avatar URL, avatar itself basically carries the url value
+    const updatedUser = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -392,7 +409,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(200, user, "user\'s avatar is updated successfully!")
+        .json(200, updatedUser, "user\'s avatar is updated successfully!")
 
 })
 
@@ -433,6 +450,9 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         .json(200, user, "user\'s coverImage is updated successfully!")
 
 })
+
+// mongo db agregation pipelines
+
 
 // export the functions
 export {
