@@ -128,7 +128,7 @@ const updateTweet = asyncHandler(async (req, res) => {
     }
 
     // update the tweet
-    tweet.content = content;
+    tweet.content = content.trim();
     await tweet.save();
 
     return res
