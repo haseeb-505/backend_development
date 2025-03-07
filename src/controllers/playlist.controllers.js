@@ -8,13 +8,12 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const createPlaylist = asyncHandler(async (req, res) => {
     const {name, description} = req.body;
     //TODO: create playlist
-
+    const userId = req.user._id;
+    
      // Validate name and description
      if (!name || name.trim() === "" || !description || description.trim() === "") {
         throw new ApiError(400, "Both name and description are required");
     }
-
-    const userId = req.user._id;
     
     // find the user with this id
     const user = await User.findById(userId);
