@@ -9,7 +9,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
     const {name, description} = req.body;
     //TODO: create playlist
     const userId = req.user._id;
-    
+
      // Validate name and description
      if (!name || name.trim() === "" || !description || description.trim() === "") {
         throw new ApiError(400, "Both name and description are required");
@@ -130,6 +130,51 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
     const {playlistId, videoId} = req.params
+    const userId = req.user?._id;
+
+    // validate playlistId and videoId
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+        throw new ApiError(400, "Invalid playlist id")
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+        throw new ApiError(400, "Invalid video id")
+    }
+
+    // validate user, playlist and video ecxistence
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found")
+    }
+
+    const playlist = await Playlist.findById(playlistId);
+    if (!playlist) {
+        throw new ApiError(404, "Playlist not found")
+    }
+
+    const video = await Video.findById(videoId);
+    if (!video) {
+        throw new ApiError(404, "Video not found")
+    }
+
+    // if user is authorized to make changes in playlist
+    if (playlist.owner.toString() !== userId.toString()) {
+        throw new ApiError(403, "You are not authorized to add video to playlist")
+    }
+
+    // Check if the video is already in the playlist to prevent duplicates
+    if (playlist.videos.includes(videoId)) {
+        throw new ApiError(400, "Video is already in the playlist");
+    }
+
+    // add video to playlist.videos
+     playlist.videos.push(videoId);
+
+     // Save the updated playlist
+     await playlist.save();
+ 
+     // Return response
+     return res.status(200).json(new ApiResponse(200, playlist, "Video added to playlist successfully"));
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
