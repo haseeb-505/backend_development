@@ -370,7 +370,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     }
 
         // TODO: delete old mage
-    // * for this we need publict id of the image and we also need to fetch image through user id
+    // * for this we need public id of the image and we also need to fetch image through user id
 
     // find user firs
     const user = await User.findById(req.user?._id);
