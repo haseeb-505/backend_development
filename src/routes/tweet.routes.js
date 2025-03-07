@@ -27,6 +27,4 @@ router.route("/tweet/:tweetId")
         .delete(deleteTweet);
 
 
-
-
-
+export default router;
