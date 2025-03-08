@@ -5,6 +5,7 @@ import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadToCloudinary} from "../utils/cloudinary.js"
+import fs from "fs";
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -54,9 +55,14 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description} = req.body
     // TODO: get video, upload to cloudinary, create video
-
+    console.log("\n\nreq.body has the following info: ", req.body)
+    console.log("\n\nreq.files has the following info: ", req.files?.videoFile)
     const userId = req.user._id;
-    const videoLocalPath = req.file?.path;
+    
+    // Retrieve uploaded files
+    const videoLocalPath = req.files?.videoFile?.[0]?.path;
+    const thumbnailPath = req.files?.thumbnail?.[0]?.path;
+
     if (!videoLocalPath) {
         throw new ApiError(400, "Video file is missinig")
     }
@@ -78,6 +84,11 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, "video file could not be uploaded to cloudinary")
     }
 
+    const thumbnail = await uploadToCloudinary(thumbnailPath);
+    if (!thumbnail) {
+        throw new ApiError(400, "thumbnail file could not be uploaded to cloudinary")
+    }
+
     // * recommended is the following check
     // if (!video || !video.url) {
     //     throw new ApiError(400, "Video file could not be uploaded to Cloudinary");
@@ -87,9 +98,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
     const newVideo = new Video({
         title: title.trim(),
         description: description.trim(),
-        videoFile: video.url || video,
+        videoFile: video.url,
+        thumbnail: thumbnail.url,
         owner: userId,
-        // duration: video.duration || 0 //* get this value from cloudinary
+        duration: video.duration || 0, //* get this value from cloudinary
         // * in cloudinary, make sure to return the uploaded object not the simple url
         // * otherwise useful Information is lost
         isPublished: true
@@ -99,7 +111,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     await newVideo.save();
 
     // remove the local videoLocalPath
-    fs.unlinkSync(videoLocalPath);
+    // ! this is already tackled in utils > cloudinary file
+    // fs.unlinkSync(videoLocalPath);
     // await fs.promises.unlink(videoLocalPath)
 
     return res

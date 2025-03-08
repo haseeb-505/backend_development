@@ -5,6 +5,7 @@ import {uploadToCloudinary} from '../utils/cloudinary.js';
 import {ApiResponse} from '../utils/ApiResponse.js';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { v2 as cloudinary } from "cloudinary";
 
 const generateAccessRefreshToken = async(userId) => {
     try {
@@ -101,12 +102,12 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         email,
         fullName,
-        avatar,
+        avatar: avatar.url,
         // avatar: avatar.url, is not serving the purpose
 
         // check if cover image is available and then extract the url
         // if not available, then assign an empty string
-        coverImage: coverImage || "",
+        coverImage: coverImage.url || "",
         password
     })
 
@@ -290,13 +291,15 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 })
 
 // password update function
-const updatePassword = asyncHandler(async (req, re) => {
+const updatePassword = asyncHandler(async (req, res) => {
     // get the old password, new password, confirm password from req.body
     // get the user from the db
     // check if the old password is correct
     // update the password
     // save the user without password validation, do not return the password
     // send the response
+
+    console.log("Received req.body:", req.body);
 
     const {oldPassword, newPassword, confirmPassword} = req.body;
 
@@ -323,12 +326,12 @@ const updatePassword = asyncHandler(async (req, re) => {
 
     // return the response to the user
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200, null, "Password updated successfully")
-    )
+        .status(200)
+        .json(
+            new ApiResponse(200, null, "Password updated successfully")
+        )
 
-}) 
+});
 
 // get current user
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -400,9 +403,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         req.user?._id,
         {
             $set: {
-                avatar: avatar || avatar.url
-                // ! this avatar itself is a url as we returning only url 
-                // ! not the image in uploadtocloudinary function
+                avatar: avatar.url
             }
         },
         {new: true}
@@ -410,7 +411,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(200, updatedUser, "user\'s avatar is updated successfully!")
+        .json(
+            new ApiResponse(200, updatedUser, "user\'s avatar is updated successfully!")
+        )
 
 })
 
@@ -419,6 +422,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 const updateCoverImage = asyncHandler(async (req, res) => {
     // access the file and save it to local path
     const coverImageLocalPath = req.file?.path
+
     // if not found
     if (!coverImageLocalPath) {
         throw new ApiError(400, "coverImage file is missing")
@@ -438,9 +442,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         req.user?._id,
         {
             $set: {
-                coverImage: coverImage || coverImage.url 
-                // ! this coverImage itself is a url as we returning only url 
-                // ! not the image in uploadtocloudinary function
+                coverImage: coverImage.url 
             }
         },
         {new: true}

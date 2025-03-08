@@ -61,6 +61,14 @@ userSchema.pre("save", async function(next){
 
 // now to compare the password
 userSchema.methods.isPasswordCorrect = async function(password){
+    if (!password) {
+        throw new Error("req.body password is missing");
+    }
+
+    if (!this.password) {
+        throw new Error("db password is missing");
+    }
+
     return await bcrypt.compare(password, this.password)
 }
 
