@@ -9,16 +9,16 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video & views, total subscribers, total likes etc.
-    const userId = req.user?._id;
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new ApiError(404, "User not found")
+    const channelId = req.body;
+    const channel = await Subscription.findById(channelId);
+    if (!channel) {
+        throw new ApiError(404, "Channel not found")
     }
 
     const channelStats = await Subscription.aggregate([
         {
             $match: {
-                channel: new mongoose.Types.ObjectId(userId), // Match the channel by userId
+                channel: new mongoose.Types.ObjectId(channelId), // Match the channel by userId
             },
         },
         // Lookup for subscribers
