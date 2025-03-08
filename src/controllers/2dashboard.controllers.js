@@ -1,10 +1,10 @@
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
 import { ApiError, ApiResponse } from "../utils/ApiResponse.js";
-import { User } from "../models/user.model.js";
-import { Subscription } from "../models/subscription.model.js";
-import { Video } from "../models/video.model.js";
-import { Like } from "../models/like.model.js";
+import { User } from "../models/user.models.js";
+import { Subscription } from "../models/subscription.models.js";
+import { Video } from "../models/video.models.js";
+import { Like } from "../models/like.models.js";
 
 const getChannelStats = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
