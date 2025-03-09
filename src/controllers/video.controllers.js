@@ -297,13 +297,15 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
         throw new ApiError(403, "You are not authorized to change the publish status of this video")
     }
 
+    // console.log("\nVideo publish status now is: ", video.isPublished)
     // Toggle publish status
     video.isPublished = !video.isPublished;
 
     // update the isPublished to publishStatus value
-    video.isPublished = publishStatus;
+    // video.isPublished = publishStatus;
     // save it
     await video.save();
+    // console.log("\nVideo publish status now is: ", video.isPublished)
 
     // return the response
     return res
